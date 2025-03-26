@@ -1,12 +1,33 @@
 import {formatDistanceToNow} from "date-fns/formatDistanceToNow";
-import ptBR from "date-fns/locale/pt-BR";
+import {ptBR} from 'date-fns/locale';
 import styles from './Post.module.css';
-import {Comment} from "./Comment.jsx";
-import {Avatar} from "./Avatar.jsx";
-import {useState} from "react";
+import {Comment} from "./Comment.tsx";
+import {Avatar} from "./Avatar.tsx";
+import {ChangeEvent, FormEvent, InvalidEvent, useState} from "react";
 
+interface Author {
+  name: string;
+  role: string;
+  avatarUrl: string;
+}
 
-export function Post({author, publishedAt, content}) {
+interface Content {
+  type: 'paragraph' | 'link';
+  content: string;
+}
+
+export interface PostType {
+  id: number;
+  author: Author;
+  publishedAt: Date;
+  content: Content[];
+}
+
+interface PostProps {
+  post: PostType
+}
+
+export function Post({post}: PostProps) {
 
   // publish date
   const publishedDateFormatted = new Intl.DateTimeFormat('pt-BR', {
@@ -14,9 +35,9 @@ export function Post({author, publishedAt, content}) {
     month: 'long',
     hour: '2-digit',
     minute: '2-digit'
-  }).format(publishedAt);
+  }).format(post.publishedAt);
 
-  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+  const publishedDateRelativeToNow = formatDistanceToNow(post.publishedAt, {
     locale: ptBR,
     addSuffix: true
   });
@@ -28,23 +49,23 @@ export function Post({author, publishedAt, content}) {
 
   const [newCommentText, setNewCommentText] = useState('');
 
-  function handleCreateNewComment() {
+  function handleCreateNewComment(event: FormEvent) {
     event.preventDefault();
     setComments([...comments, newCommentText]);
     setNewCommentText('');
   }
 
 
-  function handleNewCommentChange() {
+  function handleNewCommentChange(event: ChangeEvent<HTMLTextAreaElement>) {
     event.target.setCustomValidity('');
     setNewCommentText(event.target.value);
   }
 
-  function deleteComment(comment) {
+  function deleteComment(comment: string) {
     setComments(comments.filter(c => c !== comment));
   }
 
-  function handleNewCommentInvalid() {
+  function handleNewCommentInvalid(event: InvalidEvent<HTMLTextAreaElement>) {
     event.target.setCustomValidity('Esse campo é obrigatório')
   }
 
@@ -55,17 +76,19 @@ export function Post({author, publishedAt, content}) {
       <header>
         <div className={styles.author}>
           <Avatar
-            className={styles.avatar}
-            src={author.avatarUrl}/>
-          <div className={styles.authorInfo}>
-            <strong>{author.name}</strong>
-            <span>{author.role}</span>
+            src={post.author.avatarUrl}
+          />
+          <div
+            className={styles.authorInfo}>
+            <strong>{post.author.name}</strong>
+            <span>{post.author.role}</span>
           </div>
         </div>
-        <time title={publishedDateFormatted} dateTime={publishedAt.toISOString()}>{publishedDateRelativeToNow}</time>
+        <time title={publishedDateFormatted}
+              dateTime={post.publishedAt.toISOString()}>{publishedDateRelativeToNow}</time>
       </header>
       <div className={styles.content}>
-        {content.map(line => {
+        {post.content.map(line => {
           if (line.type === 'paragraph') {
             return <p key={line.content}>{line.content}</p>
           } else if (line.type === 'link') {

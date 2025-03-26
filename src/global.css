@@ -1,17 +1,17 @@
 :root {
-    --white: #fff;
-    --gray-100: #e1e1e6;
-    --gray-300: #c4c4cc;
-    --gray-400: #8d8d99;
-    --gray-600: #323238;
-    --gray-700: #29292e;
-    --gray-800: #202024;
-    --gray-900: #121214;
+    --white: #fffffe;
+    --gray-100: #e1e1e7;
+    --gray-300: #c4c4ca;
+    --gray-400: #8d8d98;
+    --gray-600: #32323d;
+    --gray-700: #29292d;
+    --gray-800: #202023;
+    --gray-900: #121215;
 
-    --green-300: #00b37e;
-    --green-500: #00875f;
+    --green-300: #0aac7e;
+    --green-500: #008e64;
 
-    --red-500: #f75a68;
+    --red-500: #f75a6c;
 }
 
 :focus {
